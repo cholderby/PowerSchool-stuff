@@ -1,0 +1,25 @@
+
+<script>
+$j(function() {
+    $j("#grade_-4").after('<a href="students/home.html?selectstudent=grade_level=-4" id="psuedo_grade_UPK3">UPK3</a>');
+	$j("#grade_-4").hide();
+	$j("#psuedo_grade_UPK3" ).click(function() {
+		event.preventDefault();
+		$j("#grade_-4" ).trigger("click");
+	});
+
+	$j("#grade_-3").after('<a href="students/home.html?selectstudent=grade_level=-3" id="psuedo_grade_UPK4">UPK4</a>');
+	$j("#grade_-3").hide();
+	$j("#psuedo_grade_UPK4" ).click(function() {
+		event.preventDefault();
+		$j("#grade_-3" ).trigger("click");
+	});
+	
+		$j("#grade_-5").after('<a href="students/home.html?selectstudent=grade_level=-5" id="psuedo_grade_Eval">EVAL</a>');
+	$j("#grade_-5").hide();
+	$j("#psuedo_grade_EVAL" ).click(function() {
+		event.preventDefault();
+		$j("#grade_-5" ).trigger("click");
+	});
+});
+</script>
