@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Email Addresses & Lists</title>
+~[wc:commonscripts]
+<link href="/images/css/screen.css" rel="stylesheet" media="screen">
+<link href="/images/css/print.css" rel="stylesheet" media="print">
+</head><!--NoLink-->
+<body>
+~[wc:teachers_header_fr_css]
+<!-- Beginning of title of page -->
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td><h1>&nbsp;&nbsp;Email Addresses & Lists</h1></td>
+</tr>
+</table>
+<!-- Ending of title of page -->
+<!-- Start of shaded content table -->
+<div class="box-round">
+<tr><th colspan="2"><b>NOTICE:</b> Only students in grades 9-12 have email enabled.</td></th>
+<table>
+<tr>
+<th>Student</th>
+<th>Email</th>
+<th>Parent/Guardian 1 & 2 Emails</th>
+~[tlist_sql;
+select s.lastfirst, psc.email, ps_customfields.getstudentscf(s.id,'cnt1_email'), ps_customfields.getstudentscf(s.id,'cnt2_email') from PSM_Studentcontact psc
+inner join psm_studentcontacttype psct on psc.studentcontacttypeid= psct.id and psct.name='Self'
+inner join sync_studentmap ssm on psc.studentid = ssm.studentid
+inner join students s on ssm.studentsdcid = s.dcid 
+inner join cc
+on cc.studentid = s.id
+where cc.sectionid = ~[gpv:sectionid]
+order by s.lastfirst]
+
+<tr>
+<td>~(lastfirst)</td>
+<td><a href="mailto:~(email.value)">~(email.value)</a></td>
+<td><a href="mailto:~(cnt1_email)">~(cnt1_email)</a>,  <a href="mailto:~(cnt2_email)">~(cnt2_email)</a></td>
+</tr>
+[/tlist_sql]
+</table>
+
+<h2>All Student Email Addresses</h2>
+<form>
+<table>
+<tr><td>Highlight, copy, and paste into the To field of a new email.<br /></td></tr>
+<tr><td>
+&nbsp;&nbsp;<textarea cols="160" rows="6" name="stuemail" id="stuemail">
+~[tlist_sql;
+select psc.email from PSM_STudentcontact psc
+inner join psm_studentcontacttype psct on psc.studentcontacttypeid= psct.id and psct.name='Self'
+inner join sync_studentmap ssm on psc.studentid = ssm.studentid
+inner join students s on ssm.studentsdcid = s.dcid 
+join cc 
+on cc.studentid=s.id
+where cc.sectionid = ~[gpv:sectionid]
+order by s.lastfirst
+]~(studentemail),[/tlist_sql]
+</textarea></td></tr>
+</table>
+</form>
+
+<h2>All Parent/Guardian 1 & 2 Email Addresses</h2>
+<form>
+<table>
+<tr><td>Highlight, copy, and paste into the BCC (blind carbon copy) field of a new email. This will prevent parents from seeing each others' email addresses, which should be kept confidential. <br /></td></tr>
+<tr><td>
+&nbsp;&nbsp;<textarea cols="160" rows="6" name="paremails" id="paremails" align="center">
+~[tlist_sql;
+select ps_customfields.getstudentscf(s.id, 'cnt1_email') as cnt1_email, ps_customfields.getstudentscf(s.id, 'cnt2_email') as cnt2_email
+from cc
+join students s on cc.studentid = s.id
+where cc.sectionid = ~[gpv:sectionid]
+order by s.lastfirst
+]~(cnt1_email),~(cnt2_email),[/tlist_sql]
+</textarea> </td></tr>
+</table>
+</form>
+ </div>
+<!-- End of shaded content table -->
+
+~[wc:teachers_footer_fr_css]
+
+</body>
+</html>
+
