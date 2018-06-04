@@ -1,0 +1,44 @@
+<div id="MultiSelectDialog" class="hide" >
+<div class="box-round" >
+	<h2>Type or Copy and Paste</h2>
+	<table class="linkDescList">
+		<tr>
+			<td>
+				<label for="fldName">Search Field</label>
+				<select id="fldName">
+					<option value="studentnumber">Student Number</option>
+					<option value="statenumber">Student State ID</option>
+					<option value="id">Student ID</option>
+					<option value="dcid">Student DCID</option>
+					<option value="lastfirst">LastName FirstName</option>
+					<option value="firstlast">FirstName LastName</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td><textarea id="multiSelVals" name="multiSelVals" rows="15" cols="40"></textarea><span id="rowCount"></span></td>
+		</tr>
+		<tr>
+			<td>
+				<p><input type="checkbox" id="caseInsens" />Case Insensitive (slow)</p>
+				<p><input type="checkbox" id="incInactStud" CHECKED />Include Inactive Students</p>
+			</td>
+		</tr>
+	</table>
+	<div class="button-row">
+		<button type="button" onclick="MultiSelect.collectIDs();">Search</button>
+		<button type="button" onclick="$j('.ui-dialog-titlebar-close').trigger('click');">Cancel</button>
+	</div>
+</div>
+</div>
+
+<script src="/scripts/multiselect.js"></script>
+<script>
+$j(function(){
+	MultiSelect.psVer = "~[gsv:&lt;&gt;versionstr]";
+	MultiSelect.searchType = "~[self]";
+	MultiSelect.searchType = (MultiSelect.searchType.indexOf("faculty") > 0 ? "staff" : "admin");
+	MultiSelect.displayLink();
+});
+</script>
+
