@@ -1,0 +1,38 @@
+~[if#z.~[f.in;value=~[gpv:dt];in=studentnumber,id,]=1]
+~[tlist_sql;
+	SELECT S.dcid
+	FROM students S
+	WHERE ~[if#x.~[gpv:dt]=studentnumber] S.Student_Number [/if#x] ~[if#x.~[gpv:dt]=id] S.ID [/if#x] IN (~[gpv:data])
+	~[if#y.~[gpv:ia]=] AND S.Enroll_Status = 0 [/if#y]
+	~[if.is.a.school] AND ~[if#ps.~[gpv:ps]=PS] S.Next_School [else#ps] S.schoolid [/if#ps] =~(curschoolid) [/if.is.a.school];]
+	~(1), 
+[/tlist_sql]
+[/if#z]
+
+~[if#z.~[gpv:dt]=statenumber]
+~[tlist_sql;
+	SELECT S.dcid 
+	FROM students  S
+	  JOIN (
+		select regexp_substr(a.col1,Chr(91)||Chr(94)||Chr(44)||Chr(93)||Chr(43), 1, level) Column_Value from
+		  (select '~[gpv:data]' col1 from dual) a
+		  connect by regexp_substr(a.col1,Chr(91)||Chr(94)||Chr(44)||Chr(93)||Chr(43), 1, level) is not null  
+		) T  ON (S.State_StudentNumber = T.Column_Value)
+	 ~[if.is.a.school] WHERE ~[if#ps.~[gpv:ps]=PS] S.Next_School [else#ps] S.schoolid [/if#ps] =~(curschoolid) ~[if#y.~[gpv:ia]=] AND Enroll_Status = 0 [/if#y]  [else] ~[if#y.~[gpv:ia]=] WHERE Enroll_Status = 0 [/if#y] [/if.is.a.school];]
+	~(1), 
+[/tlist_sql]
+[/if#z]
+
+~[if#z.~[f.in;value=~[gpv:dt];in=lastfirst,firstlast,]=1]
+~[tlist_sql;
+	SELECT S.dcid 
+	FROM students  S
+	  JOIN (
+		select regexp_substr(a.col1,Chr(91)||Chr(94)||Chr(44)||Chr(93)||Chr(43), 1, level) Column_Value from
+		  (select REPLACE(REPLACE('~[gpv:data]', '~', ','), '@', '%') || '%' col1 from dual) a
+		  connect by regexp_substr(a.col1,Chr(91)||Chr(94)||Chr(44)||Chr(93)||Chr(43), 1, level) is not null  
+		) T  ON ~[if#1.~[gpv:cs]=] (S.LastFirst LIKE T.Column_Value) [else#1] (UPPER(S.LastFirst) LIKE UPPER(T.Column_Value)) [/if#1]
+	 ~[if.is.a.school] WHERE ~[if#ps.~[gpv:ps]=PS] S.Next_School [else#ps] S.schoolid [/if#ps] =~(curschoolid) ~[if#y.~[gpv:ia]=] AND Enroll_Status = 0 [/if#y]  [else] ~[if#y.~[gpv:ia]=] WHERE Enroll_Status = 0 [/if#y] [/if.is.a.school];]
+	~(1), 
+[/tlist_sql]
+[/if#z]
