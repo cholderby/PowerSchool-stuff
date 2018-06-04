@@ -1,0 +1,101 @@
+<ReportName>Elementary Year End Census</ReportName>
+<ReportTitle>Elementary Year End Census</ReportTitle>
+<AfterTitle></AfterTitle>
+<ReportGroup>Attendance</ReportGroup>
+<ReportDescription></ReportDescription>
+<SQLQuery><textarea name="UF-0060052248">SELECT s.lastfirst,
+to_char(s.entrydate, 'MM/DD/YYYY')AS EntryDate,
+to_char(s.exitdate, 'MM/DD/YYYY')AS ExitDate,
+sum(case attc.Att_Code 
+when 'UNV' then 1 
+when 'UNX' then 1
+else 0 end) as Unexcused,
+sum(case attc.Att_Code
+when 'AS' then 1
+when 'ASH' then .5
+when 'ANS' then 1
+when 'ANSH' then .5 
+when 'OSS' then 1 
+when 'TRU' then 1 
+else 0 end) AS Excused,
+sum(case attc.Att_Code 
+when 'UNV' then 1 
+when 'UNX' then 1
+when 'AS' then 1
+when 'ASH' then .5
+when 'ANS' then 1
+when 'ANSH' then .5 
+when 'OSS' then 1 
+when 'TRU' then 1
+else 0 end) AS Total
+FROM Attendance att
+JOIN Attendance_Code attc ON att.Attendance_CodeID = attc.ID
+JOIN students s ON att.StudentID = s.id
+WHERE att.Att_Mode_Code = 'ATT_ModeDaily'
+AND att.SCHOOLID = ~(curschoolid) and
+to_char(att.att_date,'yyyy/mm/dd') &gt;= '%param1%' and 
+to_char(att.att_date,'yyyy/mm/dd') &lt;= '%param2%'
+GROUP BY s.lastfirst, s.entrydate, s.exitdate
+ORDER BY s.lastfirst</textarea></SQLQuery>
+<ReportHeader><td>Name</td><td>Entry Date</td><td>Exit Date</td><td>UnExcused</td><td>Excused</td><td>Total</td></ReportHeader>
+<CreateStudentSelection>1</CreateStudentSelection>
+<StudentSelectionQuery>SELECT DISTINCT att.studentid from attendance att
+WHERE att.Att_Mode_Code = 'ATT_ModeDaily'
+AND att.SCHOOLID = 0 and
+to_char(att.att_date,'yyyy/mm/dd') >= '%param1%' and 
+to_char(att.att_date,'yyyy/mm/dd') <= '%param2%'</StudentSelectionQuery>
+<CreateStudentSelectionB></CreateStudentSelectionB>
+<IncludeRowNumber>0</IncludeRowNumber>
+<OpeninNewWindow>0</OpeninNewWindow>
+<HideCopyButton></HideCopyButton>
+<HideCSVButton></HideCSVButton>
+<HideTabButton></HideTabButton>
+<HidePDFButton></HidePDFButton>
+<ShowSearchBox></ShowSearchBox>
+<ShowResultsInfo></ShowResultsInfo>
+<ParameterName1>Enter Begin Date (format: YYYY/MM/DD)</ParameterName1>
+<ParameterVal1>2017/08/30</ParameterVal1>
+<ParameterCal1></ParameterCal1>
+<ParameterOpt1></ParameterOpt1>
+<ParameterName2>Enter End Date (format: YYYY/MM/DD)</ParameterName2>
+<ParameterVal2>2018/05/14</ParameterVal2>
+<ParameterCal2></ParameterCal2>
+<ParameterOpt2></ParameterOpt2>
+<ParameterName3></ParameterName3>
+<ParameterVal3></ParameterVal3>
+<ParameterCal3></ParameterCal3>
+<ParameterOpt3></ParameterOpt3>
+<ParameterName4></ParameterName4>
+<ParameterVal4></ParameterVal4>
+<ParameterCal4></ParameterCal4>
+<ParameterOpt4></ParameterOpt4>
+<ParameterName5></ParameterName5>
+<ParameterVal5></ParameterVal5>
+<ParameterCal5></ParameterCal5>
+<ParameterOpt5></ParameterOpt5>
+<PdfOrientation></PdfOrientation>
+<NoCSVQuotes></NoCSVQuotes>
+<NoRowSel></NoRowSel>
+<ShowSHC></ShowSHC>
+<UseColRe></UseColRe>
+<UseFixHdr></UseFixHdr>
+<HidePrint></HidePrint>
+<ReportNotes></ReportNotes>
+<UseColFilt></UseColFilt>
+<UseRowGroups></UseRowGroups>
+<UseRowGroupsOptions></UseRowGroupsOptions>
+<DisplayRowGroupsCol></DisplayRowGroupsCol>
+<UseRowGroupsCounts></UseRowGroupsCounts>
+<sqlChartsReport></sqlChartsReport>
+<InitialsqlChart></InitialsqlChart>
+<InitialChartName></InitialChartName>
+<RowGroupsDesc></RowGroupsDesc>
+<FLSMapField></FLSMapField>
+<ExcFrmList></ExcFrmList>
+<ExecGrp></ExecGrp>
+<ValueLi3>0</ValueLi3>
+<NoHeaderRow></NoHeaderRow>
+<ReportDirections></ReportDirections>
+<HideParams></HideParams>
+<ShowGridlines></ShowGridlines>
+<ValueR>0</ValueR>
