@@ -1,0 +1,193 @@
+<ReportName>Fall Census Data</ReportName>
+<ReportTitle>Fall Census Data</ReportTitle>
+<AfterTitle></AfterTitle>
+<ReportGroup>Data Validation</ReportGroup>
+<ReportDescription>Created for Early Ed program, but may be used in other schools.</ReportDescription>
+<SQLQuery><textarea name="UF-0060054098">Select 
+s.student_number,
+(case
+        when s.districtofresidence = 'T029' then 'Bridport (T043)' 
+        when s.districtofresidence = 'T053' then 'Cornwall (T053)'
+        when s.districtofresidence = 'T123' then 'Middlebury (T123)'
+        when s.districtofresidence = 'T167' then 'Ripton (T167)'
+        when s.districtofresidence = 'T180' then 'Salisbury (T180)'
+        when s.districtofresidence = 'T189' then 'Shoreham (T189)'
+        when s.districtofresidence = 'T239' then 'Weybridge (T239)'
+        when s.districtofresidence = 'T001' then 'Addison (T001)'
+        when s.districtofresidence = 'T017' then 'Benson (T017)'
+        when s.districtofresidence = 'T026' then 'Brandon (T026)'
+        when s.districtofresidence = 'T031' then 'Bristol (T031)'
+        when s.districtofresidence = 'T076' then 'Ferrisburgh (T076)'
+        when s.districtofresidence = 'T081' then 'Goshen (T081)'
+        when s.districtofresidence = 'T085' then 'Granville (T085)'
+        when s.districtofresidence = 'T091' then 'Hancock (T091)'
+        when s.districtofresidence = 'T094' then 'Hartland (T094)'
+        when s.districtofresidence = 'T110' then 'Leicester (T110)'
+        when s.districtofresidence = 'T112' then 'Lincoln (T112)'
+        when s.districtofresidence = 'T127' then 'Monkton (T127)'
+        when s.districtofresidence = 'T138' then 'New Haven (T138)'
+        when s.districtofresidence = 'T148' then 'Orwell (T148)'
+        when s.districtofresidence = 'T149' then 'Panton (T149)'
+        when s.districtofresidence = 'T154' then 'Pittsford (T154)'
+        when s.districtofresidence = 'T168' then 'Rochester (T168)'
+        when s.districtofresidence = 'T186' then 'Shelburne (T186)'
+        when s.districtofresidence = 'T196' then 'Starksboro (T196)'
+        when s.districtofresidence = 'T197' then 'Stockbridge (T197)'
+        when s.districtofresidence = 'T213' then 'Vergennes I.D. (T213)'
+        when s.districtofresidence = 'T220' then 'Waltham (T220)'
+        when s.districtofresidence = 'T241' then 'Whiting (T241)'
+        when s.districtofresidence = 'T255' then 'Buels Gore (T255)'
+        when s.districtofresidence = '901' then 'Other State - Massachusetts (901)'
+        when s.districtofresidence = '902' then 'Other State - New Hampshire (902)'
+        when s.districtofresidence = '903' then 'Other State - New York (903)'
+        when s.districtofresidence = '904' then 'Other Country - Quebec, Canada (904)'
+        when s.districtofresidence = '905' then 'Other Out of State (905)'
+        when s.districtofresidence = '906' then 'Other Out of Country (906)'
+        else s.districtofresidence
+        end) 
+ as District_of_Residence,
+s.state_studentnumber State_StudentID,
+s.first_name,
+s.middle_name,
+s.last_name,
+to_char(s.dob,'MM/DD/YYYY') AS DOB,
+s.gender,
+s.ethnicity as Primary_Race,
+(Case
+        when ps_customfields.getstudentscf (s.id,'VT_Race_White')='1' then 'White'
+        when ps_customfields.getstudentscf (s.id,'VT_Race_AINA')='1' then 'Amer.Indian/Alaskan'
+        when ps_customfields.getstudentscf (s.id,'VT_Race_Black')='1' then 'African_American'
+        when ps_customfields.getstudentscf (s.id,'VT_Race_Asian')='1' then 'Asian'
+
+        when ps_customfields.getstudentscf (s.id,'VT_Race_NHPI')='1' then 'Nat. Hawaiian/Pac. Islander'        
+        end) Add_Race,
+(Case
+        when ps_customfields.getstudentscf (s.id,'hispanic')='1' then '2'
+        else '1'
+        end) Hispanic,
+s.grade_level,
+to_char(s.entrydate,'MM/DD/YYYY') EntryDate,
+(case
+        when s.entrycode='01' then 'Transfer from Public in VT'
+        when s.entrycode='02' then 'Transfer from Independent in VT'
+        when s.entrycode='03' then 'Transfer from Out of State/country'
+        when s.entrycode='06' then 'Matriculation from another school'
+        when s.entrycode='07' then 'Reentry after Withdrawal'
+        when s.entrycode='08' then 'Original entry into US School'
+        when s.entrycode='RO' then 'Rolled over from last year'
+        else s.entrycode
+        end) EntryCode,
+(Case
+        when ps_customfields.getstudentscf (s.id,'TuitionPayer')='1' then 'Tuition'
+        else ''
+        end) Funding_Tuition,
+(Case
+        when ps_customfields.getstudentscf (s.id,'DCFStudent')='1' then 'DCF'
+        else ''
+        end) Funding_DCF,  
+(Case
+        when ps_customfields.getstudentscf (s.id,'StatePlaced')='1' then 'StatePlaced'
+        else ''
+        end) Funding_StatePlaced, 
+(Case
+        when ps_customfields.getstudentscf (s.id,'Vocational_Student')='1' then 'Vocational_Student'
+        else ''
+        end) Vocational_Student, 
+to_char(s.exitdate,'MM/DD/YYYY') ExitDate,
+(Case
+        when s.exitcode='01' then 'Transfer to a Public School in VT'
+        when s.exitcode='03' then 'Transfer to an Independent School in VT'       
+        when s.exitcode='04' then 'Transfer to School Out of State/Country'                                
+        when s.exitcode='07' then 'Matriculation to another School'
+        when s.exitcode='14' then 'Discontinued School'        
+        when s.exitcode='15' then 'Absence/Status Unknown' 
+        when s.exitcode='16' then 'Moved, not Known to be Continuing' 
+        else s.exitcode
+        end) exitcode,
+to_char(s.exitcomment) TransferDetail,
+    (CASE
+            WHEN ps_customfields.getstudentscf (s.id, 'inst_set1') = '504' THEN 'Y'
+            WHEN ps_customfields.getstudentscf (s.id, 'inst_set2') = '504' THEN 'Y'
+            WHEN ps_customfields.getstudentscf (s.id, 'inst_set3') = '504' THEN 'Y'
+            ELSE ''
+            END) AS SECTION504_STUDENT,
+(CASE
+            WHEN ps_customfields.getstudentscf (s.id, 'inst_set1') = 'EST' THEN 'Y'
+            WHEN ps_customfields.getstudentscf (s.id, 'inst_set2') = 'EST' THEN 'Y'
+            WHEN ps_customfields.getstudentscf (s.id, 'inst_set3') = 'EST' THEN 'Y'
+            ELSE ''
+            END) AS EST_Student,
+s.lunchstatus,
+f.name as FTE,
+ps_customfields.getstudentscf (s.id, 'Advisor') Class,
+ps_customfields.getstudentscf (s.id, 'Case_Manager') Case_Manager                               
+
+From Students s
+Join fte f on s.fteid=f.id
+Where (
+s.SchoolID = ~(curschoolid)
+OR ~(curschoolid) = 0)
+and to_char(s.entrydate,'YYYY/MM/DD')&gt;='%param1%'
+and enroll_status=0
+
+Order by 2,6,4
+
+</textarea></SQLQuery>
+<ReportHeader><th>Local Student ID</th><th>District of Residence</th><th>State Student ID</th><th>First Name</th><th>Middle Name</th><th>Last Name</th><th>DOB</th><th>Gender</th><th>Primary Race</th><th>Other Race</th><th>Hispanic?</th><th>Grade Level</th><th>Entry Date</th><th>Entry Code</th><th>Funding - Tuitioned</th><th>Funding - DCF</th><th>Funding - StatePlaced</th><th>Vocational</th><th>Exit Date</th><th>Exit Code</th><th>Exit Comment</th><th>504 Student</th><th>EST Student</th><th>Lunch Status</th><th>FTE</th><th>Class</th><th>Case Manager</th></ReportHeader>
+<CreateStudentSelection>0</CreateStudentSelection>
+<StudentSelectionQuery></StudentSelectionQuery>
+<CreateStudentSelectionB></CreateStudentSelectionB>
+<IncludeRowNumber>0</IncludeRowNumber>
+<OpeninNewWindow>0</OpeninNewWindow>
+<HideCopyButton></HideCopyButton>
+<HideCSVButton></HideCSVButton>
+<HideTabButton></HideTabButton>
+<HidePDFButton></HidePDFButton>
+<ShowSearchBox></ShowSearchBox>
+<ShowResultsInfo></ShowResultsInfo>
+<ParameterName1>Entry Date (format YYYY/MM/DD)</ParameterName1>
+<ParameterVal1>08/30/2017</ParameterVal1>
+<ParameterCal1></ParameterCal1>
+<ParameterOpt1></ParameterOpt1>
+<ParameterName2></ParameterName2>
+<ParameterVal2></ParameterVal2>
+<ParameterCal2></ParameterCal2>
+<ParameterOpt2></ParameterOpt2>
+<ParameterName3></ParameterName3>
+<ParameterVal3></ParameterVal3>
+<ParameterCal3></ParameterCal3>
+<ParameterOpt3></ParameterOpt3>
+<ParameterName4></ParameterName4>
+<ParameterVal4></ParameterVal4>
+<ParameterCal4></ParameterCal4>
+<ParameterOpt4></ParameterOpt4>
+<ParameterName5></ParameterName5>
+<ParameterVal5></ParameterVal5>
+<ParameterCal5></ParameterCal5>
+<ParameterOpt5></ParameterOpt5>
+<PdfOrientation></PdfOrientation>
+<NoCSVQuotes></NoCSVQuotes>
+<NoRowSel></NoRowSel>
+<ShowSHC></ShowSHC>
+<UseColRe></UseColRe>
+<UseFixHdr></UseFixHdr>
+<HidePrint></HidePrint>
+<ReportNotes></ReportNotes>
+<UseColFilt></UseColFilt>
+<UseRowGroups></UseRowGroups>
+<UseRowGroupsOptions></UseRowGroupsOptions>
+<DisplayRowGroupsCol></DisplayRowGroupsCol>
+<UseRowGroupsCounts></UseRowGroupsCounts>
+<sqlChartsReport></sqlChartsReport>
+<InitialsqlChart></InitialsqlChart>
+<InitialChartName></InitialChartName>
+<RowGroupsDesc></RowGroupsDesc>
+<FLSMapField></FLSMapField>
+<ExcFrmList></ExcFrmList>
+<ExecGrp>9,10,16,18,20,</ExecGrp>
+<ValueLi3>1</ValueLi3>
+<NoHeaderRow></NoHeaderRow>
+<ReportDirections></ReportDirections>
+<HideParams></HideParams>
+<ShowGridlines></ShowGridlines>
+<ValueR>0</ValueR>
